@@ -11,11 +11,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * The type Feign user authentication only configuration.
+ *
  * @author zhouhao
  * @since 1.0
  */
 @Configuration
 public class FeignUserAuthenticationOnlyConfiguration {
+    /**
+     * Micro service auth request interceptor request interceptor.
+     *
+     * @return the request interceptor
+     */
     @Bean
     public RequestInterceptor microServiceAuthRequestInterceptor() {
 

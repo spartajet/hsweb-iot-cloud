@@ -31,6 +31,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
+ * The type Hash map client repository.
+ *
  * @author zhouhao
  * @since 1.0.0
  */
@@ -38,21 +40,45 @@ import java.util.function.Consumer;
 @Slf4j
 public class HashMapClientRepository implements ClientRepository, IotCommandSender {
 
+    /**
+     * The Vertx.
+     */
     @Autowired
     private Vertx vertx;
 
+    /**
+     * The Repository.
+     */
     private Map<String, Client> repository = new ConcurrentHashMap<>();
 
+    /**
+     * The Counter manager.
+     */
     @Autowired
     private CounterManager counterManager;
 
+    /**
+     * The Consumer map.
+     */
     private Map<String, MessageConsumer<?>> consumerMap = new ConcurrentHashMap<>();
 
+    /**
+     * The Timeout.
+     */
     private long timeout = 10 * 60 * 1000L;
 
+    /**
+     * The Event publisher.
+     */
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    /**
+     * Gets client.
+     *
+     * @param idOrClientId the id or client id
+     * @return the client
+     */
     @Override
     public Client getClient(String idOrClientId) {
         Client client = repository.get(idOrClientId);
@@ -68,6 +94,12 @@ public class HashMapClientRepository implements ClientRepository, IotCommandSend
         return client;
     }
 
+    /**
+     * Do register client.
+     *
+     * @param client the client
+     * @return the client
+     */
     protected Client doRegister(Client client) {
         log.debug("注册客户端:{}", client);
         repository.put(client.getClientId(), client);
@@ -119,6 +151,12 @@ public class HashMapClientRepository implements ClientRepository, IotCommandSend
         return client;
     }
 
+    /**
+     * Register client.
+     *
+     * @param client the client
+     * @return the client
+     */
     @Override
     public Client register(Client client) {
         Client old = getClient(client.getClientId());
@@ -133,18 +171,37 @@ public class HashMapClientRepository implements ClientRepository, IotCommandSend
         return old;
     }
 
+    /**
+     * The Counter.
+     */
     private Counter counter;
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         counter = counterManager.getCounter("iot-device-client-counter");
     }
 
+    /**
+     * Total long.
+     *
+     * @return the long
+     */
     @Override
     public long total() {
         return counter.get();
     }
 
+    /**
+     * Do local send boolean.
+     *
+     * @param topic    the topic
+     * @param clientId the client id
+     * @param command  the command
+     * @return the boolean
+     */
     protected boolean doLocalSend(String topic, String clientId, IotCommand command) {
         Client client = getClient(clientId);
         if (null != client) {
@@ -158,6 +215,13 @@ public class HashMapClientRepository implements ClientRepository, IotCommandSend
         }
     }
 
+    /**
+     * Do unregister client.
+     *
+     * @param idOrClientId the id or client id
+     * @param supplier     the supplier
+     * @return the client
+     */
     public Client doUnregister(String idOrClientId, Consumer<Boolean> supplier) {
         Client old = repository.remove(idOrClientId);
         if (old != null) {
@@ -187,16 +251,35 @@ public class HashMapClientRepository implements ClientRepository, IotCommandSend
         return old;
     }
 
+    /**
+     * Unregister client.
+     *
+     * @param idOrClientId the id or client id
+     * @return the client
+     */
     @Override
     public Client unregister(String idOrClientId) {
         return doUnregister(idOrClientId, (success) -> {
         });
     }
 
+    /**
+     * Create command send event address string.
+     *
+     * @param clientId the client id
+     * @return the string
+     */
     protected String createCommandSendEventAddress(String clientId) {
         return "iot-command-".concat(clientId);
     }
 
+    /**
+     * Send.
+     *
+     * @param topic    the topic
+     * @param clientId the client id
+     * @param command  the command
+     */
     @Override
     @SneakyThrows
     public void send(String topic, String clientId, IotCommand command) {

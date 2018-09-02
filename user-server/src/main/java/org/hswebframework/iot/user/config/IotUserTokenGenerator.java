@@ -16,19 +16,35 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
+ * The type Iot user token generator.
+ *
  * @author zhouhao
  * @since 1.0
  */
 @Component
 @ConfigurationProperties("iot-cloud-user")
 public class IotUserTokenGenerator implements UserTokenGenerator, UserTokenParser {
+    /**
+     * The Timeout.
+     */
     private int timeout = 60 * 60 * 1000;
 
+    /**
+     * Gets support token type.
+     *
+     * @return the support token type
+     */
     @Override
     public String getSupportTokenType() {
         return "iot-cloud-user";
     }
 
+    /**
+     * Generate generated token.
+     *
+     * @param authentication the authentication
+     * @return the generated token
+     */
     @Override
     public GeneratedToken generate(Authentication authentication) {
         String token = UUID.randomUUID() + "-" + IDGenerator.SNOW_FLAKE_HEX.generate();
@@ -56,6 +72,12 @@ public class IotUserTokenGenerator implements UserTokenGenerator, UserTokenParse
         };
     }
 
+    /**
+     * Parse token parsed token.
+     *
+     * @param request the request
+     * @return the parsed token
+     */
     @Override
     public ParsedToken parseToken(HttpServletRequest request) {
         String header = request.getHeader("iot-cloud-user");

@@ -10,7 +10,7 @@ import io.vertx.mqtt.MqttServer;
 import io.vertx.mqtt.MqttServerOptions;
 import io.vertx.mqtt.MqttTopicSubscription;
 import lombok.extern.slf4j.Slf4j;
-import org.hswebframework.iot.interaction.authority.DeviceAuthorityService;
+import org.hswebframework.iot.interaction.authority.IDeviceAuthorityService;
 import org.hswebframework.iot.interaction.core.Topics;
 import org.hswebframework.iot.interaction.events.CommandReplyEvent;
 import org.hswebframework.iot.interaction.events.DeviceReportEvent;
@@ -25,29 +25,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * The type Vertx mqtt server.
+ *实例存在多个,不交给spring管理
  * @author zhouhao
  * @see MqttServerVerticleSupplier
  * @since 1.0.0
  */
 @Slf4j
-//@Component //实例存在多个,不交给spring管理
 public class VertxMqttServer extends AbstractVerticle {
 
+    /**
+     * The Client repository.
+     */
     @Autowired
     private ClientRepository clientRepository;
 
+    /**
+     * The Service id.
+     */
     @Value("${vertx.service-id}")
     private String serviceId;
 
+    /**
+     * The Event publisher.
+     */
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    /**
+     * The Mqtt server options.
+     */
     @Autowired
     private MqttServerOptions mqttServerOptions;
 
+    /**
+     * The Authority service.
+     */
     @Autowired
-    private DeviceAuthorityService authorityService;
+    private IDeviceAuthorityService authorityService;
 
+    /**
+     * Start.
+     *
+     * @throws Exception the exception
+     */
     @Override
     public void start() throws Exception {
         MqttServer mqttServer = MqttServer.create(vertx, mqttServerOptions);
@@ -67,6 +88,11 @@ public class VertxMqttServer extends AbstractVerticle {
         });
     }
 
+    /**
+     * Do connect.
+     *
+     * @param endpoint the endpoint
+     */
     protected void doConnect(MqttEndpoint endpoint) {
         if (endpoint.auth() == null) {
             endpoint.reject(MqttConnectReturnCode.CONNECTION_REFUSED_NOT_AUTHORIZED);
@@ -84,6 +110,11 @@ public class VertxMqttServer extends AbstractVerticle {
         }
     }
 
+    /**
+     * Accept connect.
+     *
+     * @param endpoint the endpoint
+     */
     protected void acceptConnect(MqttEndpoint endpoint) {
         String clientId = endpoint.clientIdentifier();
         MqttClient client = new MqttClient(endpoint);

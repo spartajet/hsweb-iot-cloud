@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ * The type Device command send controller.
+ *
  * @author zhouhao
  * @since 1.0.0
  */
@@ -18,9 +20,19 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class DeviceCommandSendController {
 
+    /**
+     * The Command sender.
+     */
     @Autowired
     private IotCommandSender commandSender;
 
+    /**
+     * Send response message.
+     *
+     * @param clientId the client id
+     * @param command  the command
+     * @return the response message
+     */
     @PostMapping("/{clientId}")
     public ResponseMessage<Object> send(@PathVariable String clientId, @RequestBody IotCommand command) {
         try {

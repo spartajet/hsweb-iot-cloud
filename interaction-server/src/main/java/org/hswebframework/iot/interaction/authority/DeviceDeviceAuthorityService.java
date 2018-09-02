@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-public class DeviceDeviceAuthorityService implements DeviceAuthorityService {
+public class DeviceDeviceAuthorityService implements IDeviceAuthorityService {
 
     @Override
     public boolean verification(String clientId, String username, String password) {

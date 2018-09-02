@@ -24,32 +24,53 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * The type Vertx server configuration.
+ *
  * @author zhouhao
  * @since 1.0.0
  */
-
 @Slf4j
 @Configuration
 public class VertxServerConfiguration {
 
+    /**
+     * Vertx options vertx options.
+     *
+     * @return the vertx options
+     */
     @Bean
     @ConfigurationProperties(prefix = "vertx")
     public VertxOptions vertxOptions() {
         return new VertxOptions();
     }
 
+    /**
+     * Mqtt server options mqtt server options.
+     *
+     * @return the mqtt server options
+     */
     @Bean
     @ConfigurationProperties(prefix = "vertx.mqtt")
     public MqttServerOptions mqttServerOptions() {
         return new MqttServerOptions();
     }
 
+    /**
+     * Zookeeper config map.
+     *
+     * @return the map
+     */
     @Bean
     @ConfigurationProperties(prefix = "vertx.cluster.config")
     public Map<String, Object> zookeeperConfig() {
         return new HashMap<>();
     }
 
+    /**
+     * Vertx vertx.
+     *
+     * @return the vertx
+     */
     @Bean
     @SneakyThrows
     public Vertx vertx() {
@@ -91,22 +112,45 @@ public class VertxServerConfiguration {
         return vertx;
     }
 
+    /**
+     * Start mqtt server processor verticle register processor.
+     *
+     * @return the verticle register processor
+     */
     @Bean
     public VerticleRegisterProcessor startMqttServerProcessor() {
         return new VerticleRegisterProcessor();
     }
 
+    /**
+     * The type Verticle register processor.
+     */
     public static class VerticleRegisterProcessor implements CommandLineRunner {
 
+        /**
+         * The Verticle factory.
+         */
         @Autowired
         private VerticleFactory verticleFactory;
 
+        /**
+         * The Verticles.
+         */
         @Autowired
         private List<VerticleSupplier> verticles;
 
+        /**
+         * The Vertx.
+         */
         @Autowired
         private Vertx vertx;
 
+        /**
+         * Run.
+         *
+         * @param args the args
+         * @throws Exception the exception
+         */
         @Override
         public void run(String... args) throws Exception {
             vertx.registerVerticleFactory(verticleFactory);

@@ -12,11 +12,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * The type Feign authentication configuration.
+ *
  * @author zhouhao
  * @since 1.0
  */
 @Configuration
 public class FeignAuthenticationConfiguration {
+    /**
+     * Micro service auth request interceptor request interceptor.
+     *
+     * @return the request interceptor
+     */
     @Bean
     public RequestInterceptor microServiceAuthRequestInterceptor() {
 
@@ -37,6 +44,11 @@ public class FeignAuthenticationConfiguration {
         };
     }
 
+    /**
+     * Iot micro service token parser iot micro service token parser.
+     *
+     * @return the iot micro service token parser
+     */
     @Bean
     public IotMicroServiceTokenParser iotMicroServiceTokenParser() {
         return new IotMicroServiceTokenParser();

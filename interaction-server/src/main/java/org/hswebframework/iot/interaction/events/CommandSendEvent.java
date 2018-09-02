@@ -24,6 +24,7 @@ public class CommandSendEvent {
         return JSON.toJSONString(this);
     }
 
+    @Override
     public String toString() {
         return toJSONString();
     }

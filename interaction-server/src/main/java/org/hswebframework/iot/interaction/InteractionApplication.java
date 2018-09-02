@@ -8,6 +8,8 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
+ * The type Interaction application.
+ *
  * @author zhouhao
  * @since 1.0.0
  */
@@ -17,6 +19,11 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("org.hswebframework.iot")
 public class InteractionApplication {
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         SpringApplication.run(InteractionApplication.class, args);
     }

@@ -23,14 +23,22 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * The type Iot micro service token parser.
+ *
  * @author zhouhao
  * @since 3.0
  */
 public class IotMicroServiceTokenParser implements UserTokenParser, AuthenticationSupplier {
 
+    /**
+     * The Authentication builder factory.
+     */
     @Autowired(required = false)
     private AuthenticationBuilderFactory authenticationBuilderFactory = new SimpleAuthenticationBuilderFactory(new SimpleDataAccessConfigBuilderFactory());
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         PersonnelAuthenticationHolder.addSupplier(new PersonnelAuthenticationSupplier() {
@@ -52,6 +60,12 @@ public class IotMicroServiceTokenParser implements UserTokenParser, Authenticati
         AuthenticationHolder.addSupplier(this);
     }
 
+    /**
+     * Parse token parsed token.
+     *
+     * @param request the request
+     * @return the parsed token
+     */
     @Override
     public ParsedToken parseToken(HttpServletRequest request) {
         String base64Autz = request.getHeader("iot-cloud-autz");
@@ -91,16 +105,32 @@ public class IotMicroServiceTokenParser implements UserTokenParser, Authenticati
         };
     }
 
+    /**
+     * Get authentication.
+     *
+     * @param userId the user id
+     * @return the authentication
+     */
     @Override
     public Authentication get(String userId) {
         return null;
     }
 
+    /**
+     * Get authentication.
+     *
+     * @return the authentication
+     */
     @Override
     public Authentication get() {
         return ThreadLocalUtils.get(Authentication.class.getName());
     }
 
+    /**
+     * Gets person.
+     *
+     * @return the person
+     */
     public PersonnelAuthentication getPerson() {
         return ThreadLocalUtils.get(PersonnelAuthentication.class.getName());
     }

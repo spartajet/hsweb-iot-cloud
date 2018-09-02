@@ -8,7 +8,7 @@ import io.vertx.core.datagram.DatagramSocket;
 import io.vertx.core.datagram.DatagramSocketOptions;
 import io.vertx.core.net.SocketAddress;
 import lombok.extern.slf4j.Slf4j;
-import org.hswebframework.iot.interaction.authority.DeviceAuthorityService;
+import org.hswebframework.iot.interaction.authority.IDeviceAuthorityService;
 import org.hswebframework.iot.interaction.events.CommandReplyEvent;
 import org.hswebframework.iot.interaction.events.DeviceReportEvent;
 import org.hswebframework.iot.interaction.vertx.client.Client;
@@ -28,7 +28,7 @@ import org.springframework.context.ApplicationEventPublisher;
 public class VertxUDPServer extends AbstractVerticle {
 
     @Autowired
-    public DeviceAuthorityService authorityService;
+    public IDeviceAuthorityService authorityService;
 
     private DatagramSocket socket;
 

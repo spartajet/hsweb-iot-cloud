@@ -19,34 +19,81 @@ import java.util.stream.Collectors;
 import static java.lang.System.out;
 
 /**
+ * The type Mqtt emulator application.
+ *
  * @author zhouhao
  * @since 1.0
  */
 public class MQTTEmulatorApplication {
+    /**
+     * The constant connectCounter.
+     */
     private static AtomicLong connectCounter      = new AtomicLong();
+    /**
+     * The constant connectErrorCounter.
+     */
     private static AtomicLong connectErrorCounter = new AtomicLong();
 
+    /**
+     * The constant commandCounter.
+     */
     private static AtomicLong commandCounter = new AtomicLong();
 
+    /**
+     * The constant reportCounter.
+     */
     private static AtomicLong reportCounter      = new AtomicLong();
+    /**
+     * The constant reportErrorCounter.
+     */
     private static AtomicLong reportErrorCounter = new AtomicLong();
 
+    /**
+     * The constant replyCounter.
+     */
     private static AtomicLong replyCounter      = new AtomicLong();
+    /**
+     * The constant replyErrorCounter.
+     */
     private static AtomicLong replyErrorCounter = new AtomicLong();
 
 
+    /**
+     * The constant executorService.
+     */
     private static ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
 
+    /**
+     * The constant runnerQueue.
+     */
     private final static Queue<Runnable> runnerQueue = new LinkedBlockingDeque<>();
 
+    /**
+     * The Clients.
+     */
     private static List<MqttClient> clients;
 
+    /**
+     * The Args map.
+     */
     private static Map<String, String> argsMap;
 
+    /**
+     * The Report data.
+     */
     private static List<JSONObject> reportData;
 
+    /**
+     * The Reply data.
+     */
     private static Map<String, List<JSONObject>> replyData;
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     * @throws Exception the exception
+     */
     @SuppressWarnings("all")
     public static void main(String[] args) throws Exception {
         argsMap = argsToMap(args);
@@ -141,6 +188,11 @@ public class MQTTEmulatorApplication {
         startRunner();
     }
 
+    /**
+     * Add runner.
+     *
+     * @param runnable the runnable
+     */
     private static void addRunner(Runnable runnable) {
         runnerQueue.add(runnable);
         synchronized (runnerQueue) {
@@ -148,6 +200,9 @@ public class MQTTEmulatorApplication {
         }
     }
 
+    /**
+     * Start runner.
+     */
     private static void startRunner() {
         for (int i = 0; i < 4; i++) {
             executorService.execute(() -> {
@@ -173,6 +228,11 @@ public class MQTTEmulatorApplication {
         }
     }
 
+    /**
+     * Do report.
+     *
+     * @param client the client
+     */
     private static void doReport(MqttClient client) {
         if (null != reportData && null != client && client.isConnected()) {
             JSONObject randomData = reportData.get(new Random().nextInt(reportData.size()));
@@ -190,6 +250,12 @@ public class MQTTEmulatorApplication {
         }
     }
 
+    /**
+     * Do reply.
+     *
+     * @param client  the client
+     * @param message the message
+     */
     private static void doReply(MqttClient client, String message) {
         if (null != replyData && null != client && client.isConnected()) {
             JSONObject object = JSON.parseObject(message);
@@ -223,6 +289,11 @@ public class MQTTEmulatorApplication {
         }
     }
 
+    /**
+     * Print help.
+     *
+     * @throws Exception the exception
+     */
     private static void printHelp() throws Exception {
         if (new File("./help.txt").exists()) {
             Files.lines(Paths.get("./help.txt")).forEach(out::println);
@@ -232,6 +303,12 @@ public class MQTTEmulatorApplication {
     }
 
 
+    /**
+     * Gets cause message.
+     *
+     * @param e the e
+     * @return the cause message
+     */
     private static String getCauseMessage(Throwable e) {
         Throwable tmp = e.getCause() == null ? e : e.getCause();
         Throwable error = tmp;
@@ -244,6 +321,15 @@ public class MQTTEmulatorApplication {
         return error != null ? error.getMessage() : "";
     }
 
+    /**
+     * Connect mqtt client.
+     *
+     * @param servers  the servers
+     * @param clientId the client id
+     * @param password the password
+     * @return the mqtt client
+     * @throws Exception the exception
+     */
     public static MqttClient connect(String[] servers, String clientId, String password) throws Exception {
         boolean autoReconnect = Boolean.parseBoolean(argsMap.getOrDefault("autoReconnect", "true"));
         MqttClient client = new MqttClient(servers[0], clientId, new MqttDefaultFilePersistence(System.getProperty("java.io.tmpdir") + "/mqtt/clients"));
@@ -289,12 +375,21 @@ public class MQTTEmulatorApplication {
         return client;
     }
 
+    /**
+     * Args to map map.
+     *
+     * @param args the args
+     * @return the map
+     */
     public static Map<String, String> argsToMap(String[] args) {
         return Arrays.stream(args)
                 .map(str -> str.split("[=]"))
                 .collect(Collectors.toMap(str -> str[0], str -> str.length > 1 ? str[1] : "true"));
     }
 
+    /**
+     * Print result.
+     */
     public static void printResult() {
         out.println("上报数据数量:" + reportCounter + "次,失败:" + reportErrorCounter);
 
